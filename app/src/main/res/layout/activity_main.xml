@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="io.github.xudaojie.qrcode.MainActivity">
 
     <Button
@@ -12,4 +13,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="扫一扫"/>
-</RelativeLayout>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/qrcode_logo_zh"/>
+    <Button
+        android:id="@+id/qrcode_read_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="识别"/>
+</LinearLayout>
