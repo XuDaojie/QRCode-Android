@@ -16,6 +16,7 @@ import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.NotFoundException;
+import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 
@@ -23,7 +24,6 @@ import java.util.HashMap;
 
 import io.github.xudaojie.qrcode.common.ActionUtils;
 import io.github.xudaojie.qrcode.common.QrUtils;
-import io.github.xudaojie.qrcode.zxing.camera.PlanarYUVLuminanceSource;
 
 import static io.github.xudaojie.qrcode.common.QrUtils.getYUV420sp;
 
@@ -90,16 +90,17 @@ public class MainActivity extends AppCompatActivity {
                 int[] pixels = new int[width * height];
                 bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 //                RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);
-                PlanarYUVLuminanceSource source1 = new PlanarYUVLuminanceSource(getYUV420sp(width, height, bitmap), width, height, 0, 0, width, height);
+                PlanarYUVLuminanceSource source1 = new PlanarYUVLuminanceSource(getYUV420sp(width, height, bitmap), width, height, 0, 0, width, height, false);
                 BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(source1));
+//                BinaryBitmap binaryBitmap = new BinaryBitmap(new GlobalHistogramBinarizer(source1));
                 HashMap<DecodeHintType, Object> hints = new HashMap<>();
 
                 hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
-                hints.put(DecodeHintType.PURE_BARCODE, Boolean.FALSE);
                 hints.put(DecodeHintType.CHARACTER_SET, "UTF-8");
 
                 try {
                     Result result = new MultiFormatReader().decode(binaryBitmap, hints);
+//                    Result result = new QRCodeReader().decode(binaryBitmap, hints);
                     Log.d("MainActivity", result.getText());
                 } catch (NotFoundException e) {
                     e.printStackTrace();
