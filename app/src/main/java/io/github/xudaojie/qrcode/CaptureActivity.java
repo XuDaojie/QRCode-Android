@@ -3,19 +3,23 @@ package io.github.xudaojie.qrcode;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -24,11 +28,12 @@ import com.google.zxing.Result;
 import java.io.IOException;
 import java.util.Vector;
 
+import io.github.xudaojie.qrcode.common.ActionUtils;
+import io.github.xudaojie.qrcode.common.QrUtils;
 import io.github.xudaojie.qrcode.zxing.camera.CameraManager;
 import io.github.xudaojie.qrcode.zxing.decoding.CaptureActivityHandler;
 import io.github.xudaojie.qrcode.zxing.decoding.InactivityTimer;
 import io.github.xudaojie.qrcode.zxing.view.ViewfinderView;
-
 
 /**
  * Initial the camera
@@ -47,7 +52,10 @@ public class CaptureActivity extends Activity implements Callback {
     private boolean playBeep;
     private static final float BEEP_VOLUME = 0.10f;
     private boolean vibrate;
-    private Button cancelScanButton;
+    private boolean allowOpenLight = true;
+    private ImageButton lightIbtn;
+    private TextView galleryTv;
+
 
     /**
      * Called when the activity is first created.
@@ -59,7 +67,8 @@ public class CaptureActivity extends Activity implements Callback {
         //ViewUtil.addTopView(getApplicationContext(), this, R.string.scan_card);
         CameraManager.init(getApplication());
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
-        cancelScanButton = (Button) this.findViewById(R.id.btn_cancel_scan);
+        lightIbtn = (ImageButton) findViewById(R.id.light_ibtn);
+        galleryTv = (TextView) findViewById(R.id.gallery_tv);
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
     }
@@ -79,19 +88,29 @@ public class CaptureActivity extends Activity implements Callback {
         characterSet = null;
 
         playBeep = true;
-        AudioManager audioService = (AudioManager) getSystemService(AUDIO_SERVICE);
+        final AudioManager audioService = (AudioManager) getSystemService(AUDIO_SERVICE);
         if (audioService.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
             playBeep = false;
         }
         initBeepSound();
         vibrate = true;
 
-        //quit the scan view
-        cancelScanButton.setOnClickListener(new OnClickListener() {
-
+        lightIbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CaptureActivity.this.finish();
+                if (allowOpenLight) {
+                    CameraManager.get().setFlashLight(true);
+                } else {
+                    CameraManager.get().setFlashLight(false);
+                }
+                allowOpenLight = !allowOpenLight;
+            }
+        });
+        galleryTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActionUtils.startActivityForGallery(CaptureActivity.this,
+                        ActionUtils.PHOTO_REQUEST_GALLERY);
             }
         });
     }
@@ -110,6 +129,29 @@ public class CaptureActivity extends Activity implements Callback {
     protected void onDestroy() {
         inactivityTimer.shutdown();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK
+                && data != null
+                && requestCode == ActionUtils.PHOTO_REQUEST_GALLERY) {
+            Uri inputUri = data.getData();
+
+            String[] proj = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(inputUri, proj, null, null, null);
+            if (cursor.moveToFirst()) {
+                String path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+                Result result = QrUtils.decodeImage(path);
+                if (result != null) {
+                    new AlertDialog.Builder(CaptureActivity.this)
+                            .setMessage(result.getText())
+                            .setPositiveButton("确定", null)
+                            .show();
+                }
+            }
+        }
     }
 
     /**

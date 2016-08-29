@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    tools:context=".CaptureActivity">
 
     <SurfaceView
         android:id="@+id/preview_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"/>
 
     <io.github.xudaojie.qrcode.zxing.view.ViewfinderView
         android:id="@+id/viewfinder_view"
@@ -18,32 +20,58 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="fill_parent"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:text="Scan Barcode"
+            android:minHeight="?android:attr/actionBarSize">
+
+            <ImageButton
+                android:id="@+id/back_"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:paddingLeft="12dp"
+                android:src="@drawable/ic_back"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="扫一扫"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                tools:textColor="@android:color/black"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom">
+
+        <ImageButton
+            android:id="@+id/light_ibtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:background="@null"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_lightbulb_outline_white_24dp"/>
+        <TextView
+            android:id="@+id/gallery_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="12dp"
             android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btn_cancel_scan"
-            android:layout_width="230dp"
-            android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerInParent="true"
-            android:layout_marginBottom="75dp"
-            android:text="Cancel"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
+            android:text="相册"/>
     </RelativeLayout>
 
 </FrameLayout>

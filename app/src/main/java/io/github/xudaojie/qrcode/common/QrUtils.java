@@ -6,13 +6,17 @@ import android.graphics.BitmapFactory;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.GlobalHistogramBinarizer;
+import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -187,5 +191,29 @@ public class QrUtils {
         } catch (ReaderException e) {
         }
         return result;
+    }
+
+    public static Result decodeImage(final String path) {
+        Bitmap bitmap = QrUtils.decodeSampledBitmapFromFile(path, 256, 256);
+
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int[] pixels = new int[width * height];
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+//                RGBLuminanceSource source = new RGBLuminanceSource(width, height, pixels);
+        PlanarYUVLuminanceSource source1 = new PlanarYUVLuminanceSource(getYUV420sp(width, height, bitmap), width, height, 0, 0, width, height, false);
+        BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(source1));
+//                BinaryBitmap binaryBitmap = new BinaryBitmap(new GlobalHistogramBinarizer(source1));
+        HashMap<DecodeHintType, Object> hints = new HashMap<>();
+
+        hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+        hints.put(DecodeHintType.CHARACTER_SET, "UTF-8");
+
+        try {
+            return new MultiFormatReader().decode(binaryBitmap, hints);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

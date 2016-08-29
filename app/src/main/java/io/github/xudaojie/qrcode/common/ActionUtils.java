@@ -23,7 +23,7 @@ public class ActionUtils {
      * @param activity
      * @param outputUri 照片输出路径
      */
-    public static void startActivityForCamera(Activity activity, Uri outputUri) {
+    public static void startActivityForCamera(Activity activity, int requestCode, Uri outputUri) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         // 制定图片保存路径
@@ -35,7 +35,7 @@ public class ActionUtils {
      * 进入系统图库
      * @param activity
      */
-    public static void startActivityForGallery(Activity activity) {
+    public static void startActivityForGallery(Activity activity, int requestCode) {
         // 弹出系统图库
         Intent i = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -49,7 +49,8 @@ public class ActionUtils {
      * @param width 裁剪后宽度(px)
      * @param height 裁剪后高度(px)
      */
-    private void startActivityForImageCut(Activity activity, Uri inputUri, Uri outputUri,
+    private void startActivityForImageCut(Activity activity, int requestCode,
+                                          Uri inputUri, Uri outputUri,
                                           int width, int height) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(inputUri, "image/*");

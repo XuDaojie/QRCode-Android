@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         qrCodeReadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActionUtils.startActivityForGallery(MainActivity.this);
+                ActionUtils.startActivityForGallery(MainActivity.this, ActionUtils.PHOTO_REQUEST_GALLERY);
             }
         });
 

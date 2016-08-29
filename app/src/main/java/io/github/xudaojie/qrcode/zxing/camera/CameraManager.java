@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * This object wraps the Camera service object and expects to be the only one talking to it. The
@@ -318,4 +319,50 @@ public final class CameraManager {
         return context;
     }
 
+    /**
+     * 打开或关闭闪光灯
+     *
+     * @param open 控制是否打开
+     * @return 打开或关闭失败，则返回false。
+     */
+    public boolean setFlashLight(boolean open) {
+        if (camera == null) {
+            return false;
+        }
+        Camera.Parameters parameters = camera.getParameters();
+        if (parameters == null) {
+            return false;
+        }
+        List<String> flashModes = parameters.getSupportedFlashModes();
+        // Check if camera flash exists
+        if (null == flashModes || 0 == flashModes.size()) {
+            // Use the screen as a flashlight (next best thing)
+            return false;
+        }
+        String flashMode = parameters.getFlashMode();
+        if (open) {
+            if (Camera.Parameters.FLASH_MODE_TORCH.equals(flashMode)) {
+                return true;
+            }
+            // Turn on the flash
+            if (flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                camera.setParameters(parameters);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (Camera.Parameters.FLASH_MODE_OFF.equals(flashMode)) {
+                return true;
+            }
+            // Turn on the flash
+            if (flashModes.contains(Camera.Parameters.FLASH_MODE_OFF)) {
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                camera.setParameters(parameters);
+                return true;
+            } else
+                return false;
+        }
+    }
 }
