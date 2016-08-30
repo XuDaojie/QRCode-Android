@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -99,6 +100,11 @@ public final class ViewfinderView extends View {
         canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);
         canvas.drawRect(0, frame.bottom + 1, width, height, paint);
 
+        paint.setColor(Color.GRAY);
+        paint.setTextSize(36);
+        String text = "将二维码/条形码置于框内即自动扫描";
+        canvas.drawText(text, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+
         if (resultBitmap != null) {
             // Draw the opaque result bitmap over the scanning rectangle
             paint.setAlpha(OPAQUE);
@@ -106,11 +112,13 @@ public final class ViewfinderView extends View {
         } else {
 
             // Draw a two pixel solid black border inside the framing rect
-            paint.setColor(frameColor);
+//            paint.setColor(frameColor);
             canvas.drawRect(frame.left, frame.top, frame.right + 1, frame.top + 2, paint);
             canvas.drawRect(frame.left, frame.top + 2, frame.left + 2, frame.bottom - 1, paint);
             canvas.drawRect(frame.right - 1, frame.top, frame.right + 1, frame.bottom - 1, paint);
             canvas.drawRect(frame.left, frame.bottom - 1, frame.right + 1, frame.bottom + 1, paint);
+
+            drawAngle(canvas, frame);
 
             // Draw a red "laser scanner" line through the middle to show decoding is active
             paint.setColor(laserColor);
@@ -165,4 +173,26 @@ public final class ViewfinderView extends View {
         possibleResultPoints.add(point);
     }
 
+    private void drawAngle(Canvas canvas, Rect frame) {
+        int angleLength = 50;
+        int angleWidth = 10;
+        int top = frame.top;
+        int bottom = frame.bottom;
+        int left = frame.left;
+        int right = frame.right;
+
+        paint.setColor(Color.WHITE);
+        // 左上
+        canvas.drawRect(left - angleWidth, top - angleWidth, left + angleLength, top, paint);
+        canvas.drawRect(left - angleWidth, top - angleWidth, left, top + angleLength, paint);
+        // 左下
+        canvas.drawRect(left - angleWidth, bottom, left + angleLength, bottom + angleWidth, paint);
+        canvas.drawRect(left - angleWidth, bottom - angleLength, left, bottom + angleWidth, paint);
+        // 右上
+        canvas.drawRect(right - angleLength, top - angleWidth, right + angleWidth, top, paint);
+        canvas.drawRect(right, top - angleWidth, right + angleWidth, top + angleLength, paint);
+        // 右下
+        canvas.drawRect(right - angleLength, bottom, right, bottom + angleWidth, paint);
+        canvas.drawRect(right, bottom - angleLength, right + angleWidth, bottom + angleWidth, paint);
+    }
 }
