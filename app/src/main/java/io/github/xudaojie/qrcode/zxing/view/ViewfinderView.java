@@ -43,7 +43,7 @@ import io.github.xudaojie.qrcode.zxing.camera.CameraManager;
 public final class ViewfinderView extends View {
 
     private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192, 128, 64};
-    private static final long ANIMATION_DELAY = 100L;
+    private static final long ANIMATION_DELAY = 10L;
     private static final int OPAQUE = 0xFF;
 
     private final Paint paint;
@@ -56,6 +56,8 @@ public final class ViewfinderView extends View {
     private int scannerAlpha;
     private Collection<ResultPoint> possibleResultPoints;
     private Collection<ResultPoint> lastPossibleResultPoints;
+
+    private float translateY = 5f;
 
     // This constructor is used when the class is built from an XML resource.
     public ViewfinderView(Context context, AttributeSet attrs) {
@@ -100,10 +102,7 @@ public final class ViewfinderView extends View {
         canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);
         canvas.drawRect(0, frame.bottom + 1, width, height, paint);
 
-        paint.setColor(Color.GRAY);
-        paint.setTextSize(36);
-        String text = "将二维码/条形码置于框内即自动扫描";
-        canvas.drawText(text, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+        drawText(canvas, frame);
 
         if (resultBitmap != null) {
             // Draw the opaque result bitmap over the scanning rectangle
@@ -120,33 +119,46 @@ public final class ViewfinderView extends View {
 
             drawAngle(canvas, frame);
 
-            // Draw a red "laser scanner" line through the middle to show decoding is active
-            paint.setColor(laserColor);
-            paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
-            scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
-            int middle = frame.height() / 2 + frame.top;
-            canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);
+//            // Draw a red "laser scanner" line through the middle to show decoding is active
+//            paint.setColor(laserColor);
+//            paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
+//            scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
+//            int middle = frame.height() / 2 + frame.top;
+//            canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);
 
-            Collection<ResultPoint> currentPossible = possibleResultPoints;
-            Collection<ResultPoint> currentLast = lastPossibleResultPoints;
-            if (currentPossible.isEmpty()) {
-                lastPossibleResultPoints = null;
-            } else {
-                possibleResultPoints = new HashSet<ResultPoint>(5);
-                lastPossibleResultPoints = currentPossible;
-                paint.setAlpha(OPAQUE);
-                paint.setColor(resultPointColor);
-                for (ResultPoint point : currentPossible) {
-                    canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 6.0f, paint);
-                }
+            // Draw a red "laser scanner" line through the middle to show decoding is active
+            paint.setColor(Color.parseColor("#03A9F4"));
+//            paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
+            scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
+            canvas.translate(0, translateY);
+            canvas.drawRect(frame.left + 10, frame.top, frame.right - 10, frame.top + 10, paint);
+
+            translateY += 5f;
+            if (translateY >= 720) {
+                translateY = 5f;
             }
-            if (currentLast != null) {
-                paint.setAlpha(OPAQUE / 2);
-                paint.setColor(resultPointColor);
-                for (ResultPoint point : currentLast) {
-                    canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 3.0f, paint);
-                }
-            }
+
+//            // Draw a yellow "possible points"
+//            Collection<ResultPoint> currentPossible = possibleResultPoints;
+//            Collection<ResultPoint> currentLast = lastPossibleResultPoints;
+//            if (currentPossible.isEmpty()) {
+//                lastPossibleResultPoints = null;
+//            } else {
+//                possibleResultPoints = new HashSet<ResultPoint>(5);
+//                lastPossibleResultPoints = currentPossible;
+//                paint.setAlpha(OPAQUE);
+//                paint.setColor(resultPointColor);
+//                for (ResultPoint point : currentPossible) {
+//                    canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 6.0f, paint);
+//                }
+//            }
+//            if (currentLast != null) {
+//                paint.setAlpha(OPAQUE / 2);
+//                paint.setColor(resultPointColor);
+//                for (ResultPoint point : currentLast) {
+//                    canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 3.0f, paint);
+//                }
+//            }
 
             // Request another update at the animation interval, but only repaint the laser line,
             // not the entire viewfinder mask.
@@ -194,5 +206,12 @@ public final class ViewfinderView extends View {
         // 右下
         canvas.drawRect(right - angleLength, bottom, right, bottom + angleWidth, paint);
         canvas.drawRect(right, bottom - angleLength, right + angleWidth, bottom + angleWidth, paint);
+    }
+
+    private void drawText(Canvas canvas, Rect frame) {
+        paint.setColor(Color.GRAY);
+        paint.setTextSize(36);
+        String text = "将二维码/条形码置于框内即自动扫描";
+        canvas.drawText(text, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
     }
 }
