@@ -74,7 +74,18 @@ public final class ViewfinderView extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
-        Rect frame = CameraManager.get().getFramingRect();
+        Rect frame;
+        if (isInEditMode()) {
+            int screenWidth = getResources().getDisplayMetrics().widthPixels;
+            int screenHeight = getResources().getDisplayMetrics().heightPixels;
+            int width = 720;
+            int height = 720;
+            int leftOffset = (screenWidth - width) / 2;
+            int topOffset = (screenHeight - height) / 2;
+            frame = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
+        } else {
+            frame = CameraManager.get().getFramingRect();
+        }
         if (frame == null) {
             return;
         }

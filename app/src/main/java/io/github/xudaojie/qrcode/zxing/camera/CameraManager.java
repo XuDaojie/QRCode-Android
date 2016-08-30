@@ -40,8 +40,8 @@ public final class CameraManager {
     private static final String TAG = CameraManager.class.getSimpleName();
     private static final int MIN_FRAME_WIDTH = 240;
     private static final int MIN_FRAME_HEIGHT = 240;
-    private static final int MAX_FRAME_WIDTH = 640;
-    private static final int MAX_FRAME_HEIGHT = 640;
+    private static final int MAX_FRAME_WIDTH = 720;
+    private static final int MAX_FRAME_HEIGHT = 720;
     private static CameraManager cameraManager;
 
     static {
@@ -210,6 +210,8 @@ public final class CameraManager {
      * far enough away to ensure the image will be in focus.
      *
      * @return The rectangle to draw on screen in window coordinates.
+     *
+     * 获取扫描框显示位置
      */
     public Rect getFramingRect() {
         Point screenResolution = configManager.getScreenResolution();
@@ -231,7 +233,7 @@ public final class CameraManager {
             }
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 2;
-            framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
+            framingRect = new Rect(leftOffset, topOffset - 120, leftOffset + width, topOffset + height - 120);
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;
@@ -240,6 +242,8 @@ public final class CameraManager {
     /**
      * Like {@link #getFramingRect} but coordinates are in terms of the preview frame,
      * not UI / screen.
+     *
+     * 获取扫描实际有效区域
      */
     public Rect getFramingRectInPreview() {
         if (framingRectInPreview == null) {
