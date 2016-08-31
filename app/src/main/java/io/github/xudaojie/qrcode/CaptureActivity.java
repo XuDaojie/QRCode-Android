@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
@@ -44,6 +45,8 @@ import io.github.xudaojie.qrcode.zxing.view.ViewfinderView;
  * @author Ryan.Tang
  */
 public class CaptureActivity extends Activity implements Callback {
+
+    private static final String TAG = CaptureActivity.class.getSimpleName();
 
     private CaptureActivityHandler handler;
     private ViewfinderView viewfinderView;
@@ -160,8 +163,11 @@ public class CaptureActivity extends Activity implements Callback {
                 String path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
                 Result result = QrUtils.decodeImage(path);
                 if (result != null) {
+                    if (BuildConfig.DEBUG) Log.d(TAG, result.getText());
+                    handleDecode(result, null);
+                } else {
                     new AlertDialog.Builder(CaptureActivity.this)
-                            .setMessage(result.getText())
+                            .setMessage("此图片无法识别")
                             .setPositiveButton("确定", null)
                             .show();
                 }
