@@ -56,13 +56,13 @@
         android:layout_gravity="bottom">
 
         <ImageButton
-            android:id="@+id/light_ibtn"
+            android:id="@+id/flash_ibtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp"
             android:background="@null"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_lightbulb_outline_white_24dp"/>
+            android:padding="12dp"
+            android:src="@drawable/ic_flash_off_white_24dp"/>
+
         <TextView
             android:id="@+id/gallery_tv"
             android:layout_width="wrap_content"
@@ -70,8 +70,8 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:paddingRight="12dp"
-            android:textColor="@android:color/white"
-            android:text="相册"/>
+            android:text="相册"
+            android:textColor="@android:color/white"/>
     </RelativeLayout>
 
 </FrameLayout>

@@ -13,13 +13,4 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="扫一扫"/>
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/qrcode_logo_zh"/>
-    <Button
-        android:id="@+id/qrcode_read_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="识别"/>
 </LinearLayout>

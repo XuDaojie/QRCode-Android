@@ -57,7 +57,7 @@ public class CaptureActivity extends Activity implements Callback {
     private boolean vibrate;
     private boolean allowOpenLight = true;
     private ImageView backIbtn;
-    private ImageButton lightIbtn;
+    private ImageButton flashIbtn;
     private TextView galleryTv;
 
 
@@ -74,7 +74,7 @@ public class CaptureActivity extends Activity implements Callback {
         CameraManager.init(getApplication());
         backIbtn = (ImageView) findViewById(R.id.back_ibtn);
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
-        lightIbtn = (ImageButton) findViewById(R.id.light_ibtn);
+        flashIbtn = (ImageButton) findViewById(R.id.flash_ibtn);
         galleryTv = (TextView) findViewById(R.id.gallery_tv);
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
@@ -108,13 +108,15 @@ public class CaptureActivity extends Activity implements Callback {
                 CaptureActivity.this.finish();
             }
         });
-        lightIbtn.setOnClickListener(new View.OnClickListener() {
+        flashIbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (allowOpenLight) {
                     CameraManager.get().setFlashLight(true);
+                    flashIbtn.setImageResource(R.drawable.ic_flash_on_white_24dp);
                 } else {
                     CameraManager.get().setFlashLight(false);
+                    flashIbtn.setImageResource(R.drawable.ic_flash_off_white_24dp);
                 }
                 allowOpenLight = !allowOpenLight;
             }

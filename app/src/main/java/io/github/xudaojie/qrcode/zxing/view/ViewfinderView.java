@@ -135,7 +135,7 @@ public final class ViewfinderView extends View {
             canvas.drawRect(frame.left + 10, frame.top, frame.right - 10, frame.top + 10, paint);
 
             translateY += 5f;
-            if (translateY >= 720) {
+            if (translateY >= 710) {
                 translateY = 5f;
             }
 
