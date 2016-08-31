@@ -1,7 +1,7 @@
 QRCode
 ===
 本项目依赖于[ZXing](https://github.com/zxing/zxing) 3.2.1
-![Scan](https://github.com/XuDaojie/QRCode-Android/art/scan_qrcode.gif)
+![Scan](https://github.com/XuDaojie/QRCode-Android/blob/master/art/scan_qrcode.gif)
 
 ## Use
 
@@ -50,8 +50,9 @@ repositories {
 
 ### Add dependency
 ``` gradle
+compile 'com.github.XuDaojie:QRCode-Android:v0.0.1'
 ```
 
-### 吃水不忘挖井人
+## 吃水不忘挖井人
 [ZXing](https://github.com/zxing/zxing)<br>
 [zxing扫描二维码和识别图片二维码及其优化策略](http://iluhcm.com/2016/01/08/scan-qr-code-and-recognize-it-from-picture-fastly-using-zxing/)<br>
