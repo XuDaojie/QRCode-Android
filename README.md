@@ -1,6 +1,6 @@
 QRCode
 ===
-本项目依赖于[ZXing](https://github.com/zxing/zxing) 3.2.1
+本项目依赖于[ZXing](https://github.com/zxing/zxing) 3.2.1<br>
 ![Scan](https://github.com/XuDaojie/QRCode-Android/blob/master/art/scan_qrcode.gif)
 
 ## Use
