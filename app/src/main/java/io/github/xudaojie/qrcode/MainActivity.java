@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import io.github.xudaojie.qrcodelib.CaptureActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_QR_CODE = 1;
