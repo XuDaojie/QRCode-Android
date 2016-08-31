@@ -28,7 +28,7 @@
             android:minHeight="?android:attr/actionBarSize">
 
             <ImageButton
-                android:id="@+id/back_"
+                android:id="@+id/back_ibtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -59,7 +59,7 @@
             android:id="@+id/light_ibtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
+            android:padding="12dp"
             android:background="@null"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_lightbulb_outline_white_24dp"/>

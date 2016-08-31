@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ public class CaptureActivity extends Activity implements Callback {
     private static final float BEEP_VOLUME = 0.10f;
     private boolean vibrate;
     private boolean allowOpenLight = true;
+    private ImageView backIbtn;
     private ImageButton lightIbtn;
     private TextView galleryTv;
 
@@ -70,6 +72,7 @@ public class CaptureActivity extends Activity implements Callback {
         setContentView(R.layout.camera);
         //ViewUtil.addTopView(getApplicationContext(), this, R.string.scan_card);
         CameraManager.init(getApplication());
+        backIbtn = (ImageView) findViewById(R.id.back_ibtn);
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
         lightIbtn = (ImageButton) findViewById(R.id.light_ibtn);
         galleryTv = (TextView) findViewById(R.id.gallery_tv);
@@ -99,6 +102,12 @@ public class CaptureActivity extends Activity implements Callback {
         initBeepSound();
         vibrate = true;
 
+        backIbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CaptureActivity.this.finish();
+            }
+        });
         lightIbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
