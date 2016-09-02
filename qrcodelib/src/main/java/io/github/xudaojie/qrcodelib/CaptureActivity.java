@@ -1,8 +1,10 @@
 package io.github.xudaojie.qrcodelib;
 
+import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -10,10 +12,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -48,6 +54,11 @@ public class CaptureActivity extends Activity implements Callback {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
 
+    private static final int REQUEST_PERMISSION_CAMERA = 1000;
+    private static final int REQUEST_PERMISSION_PHOTO = 1001;
+
+    private CaptureActivity mActivity;
+
     private CaptureActivityHandler handler;
     private ViewfinderView viewfinderView;
     private boolean hasSurface;
@@ -73,6 +84,7 @@ public class CaptureActivity extends Activity implements Callback {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.camera);
+        mActivity = this;
         //ViewUtil.addTopView(getApplicationContext(), this, R.string.scan_card);
         CameraManager.init(getApplication());
         backIbtn = (ImageView) findViewById(R.id.back_ibtn);
@@ -81,6 +93,13 @@ public class CaptureActivity extends Activity implements Callback {
         galleryTv = (TextView) findViewById(R.id.gallery_tv);
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
+
+        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mActivity,
+                    new String[] {Manifest.permission.CAMERA},
+                    REQUEST_PERMISSION_CAMERA);
+        }
     }
 
     @Override
@@ -108,7 +127,7 @@ public class CaptureActivity extends Activity implements Callback {
         backIbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CaptureActivity.this.finish();
+                mActivity.finish();
             }
         });
         flashIbtn.setOnClickListener(new View.OnClickListener() {
@@ -127,8 +146,15 @@ public class CaptureActivity extends Activity implements Callback {
         galleryTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActionUtils.startActivityForGallery(CaptureActivity.this,
-                        ActionUtils.PHOTO_REQUEST_GALLERY);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        && ContextCompat.checkSelfPermission(mActivity, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(mActivity,
+                            new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                            REQUEST_PERMISSION_PHOTO);
+                } else {
+                    ActionUtils.startActivityForGallery(mActivity, ActionUtils.PHOTO_REQUEST_GALLERY);
+                }
             }
         });
     }
@@ -175,6 +201,34 @@ public class CaptureActivity extends Activity implements Callback {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && requestCode == REQUEST_PERMISSION_CAMERA) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                // 未获得Camera权限
+                new AlertDialog.Builder(mActivity)
+                        .setMessage("请在App设置中开启摄像头权限后重试")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mActivity.finish();
+                            }
+                        })
+                        .show();
+            }
+        } else if (grantResults.length > 0 && requestCode == REQUEST_PERMISSION_PHOTO) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                new AlertDialog.Builder(mActivity)
+                        .setMessage("请在App设置中开启文件权限后重试")
+                        .setPositiveButton("确定", null)
+                        .show();
+            } else {
+                ActionUtils.startActivityForGallery(mActivity, ActionUtils.PHOTO_REQUEST_GALLERY);
+            }
+        }
+    }
+
     /**
      * Handler scan result
      *
@@ -196,7 +250,7 @@ public class CaptureActivity extends Activity implements Callback {
             resultIntent.putExtras(bundle);
             this.setResult(RESULT_OK, resultIntent);
         }
-        CaptureActivity.this.finish();
+        mActivity.finish();
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
