@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
@@ -82,6 +83,7 @@ public class CaptureActivity extends Activity implements Callback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.camera);
         mActivity = this;
@@ -195,6 +197,7 @@ public class CaptureActivity extends Activity implements Callback {
                     handleDecode(result, null);
                 } else {
                     new AlertDialog.Builder(CaptureActivity.this)
+                            .setTitle("提示")
                             .setMessage("此图片无法识别")
                             .setPositiveButton("确定", null)
                             .show();
@@ -210,7 +213,8 @@ public class CaptureActivity extends Activity implements Callback {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 // 未获得Camera权限
                 new AlertDialog.Builder(mActivity)
-                        .setMessage("请在App设置中开启摄像头权限后重试")
+                        .setTitle("提示")
+                        .setMessage("请在系统设置中为App开启摄像头权限后重试")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -222,7 +226,8 @@ public class CaptureActivity extends Activity implements Callback {
         } else if (grantResults.length > 0 && requestCode == REQUEST_PERMISSION_PHOTO) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 new AlertDialog.Builder(mActivity)
-                        .setMessage("请在App设置中开启文件权限后重试")
+                        .setTitle("提示")
+                        .setMessage("请在系统设置中为App中开启文件权限后重试")
                         .setPositiveButton("确定", null)
                         .show();
             } else {

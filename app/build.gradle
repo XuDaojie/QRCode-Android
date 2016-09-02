@@ -32,8 +32,8 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.2.0'
-//    compile project(':qrcodelib')
-    compile('com.github.XuDaojie:QRCode-Android:v0.1.0', {
-        exclude group: 'com.android.support'
-    })
+    compile project(':qrcodelib')
+//    compile('com.github.XuDaojie:QRCode-Android:v0.1.1', {
+//        exclude group: 'com.android.support'
+//    })
 }
