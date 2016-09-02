@@ -94,11 +94,13 @@ public class CaptureActivity extends Activity implements Callback {
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
 
-        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(mActivity,
-                    new String[] {Manifest.permission.CAMERA},
-                    REQUEST_PERMISSION_CAMERA);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mActivity,
+                        new String[]{Manifest.permission.CAMERA},
+                        REQUEST_PERMISSION_CAMERA);
+            }
         }
     }
 
