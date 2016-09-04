@@ -1,6 +1,6 @@
 QRCode
 ===
-minSdkVersion >= 14
+minSdkVersion >= 14<br>
 本项目依赖于[ZXing](https://github.com/zxing/zxing) 3.2.1<br>
 ![Scan](https://github.com/XuDaojie/QRCode-Android/blob/master/art/scan_qrcode.gif)
 
@@ -51,7 +51,7 @@ repositories {
 
 ### Add dependency
 ``` gradle
-compile('com.github.XuDaojie:QRCode-Android:v0.1.0', {
+compile('com.github.XuDaojie:QRCode-Android:v0.1.1', {
     exclude group: 'com.android.support'
 })
 // 6.0权限控制需要support支持
