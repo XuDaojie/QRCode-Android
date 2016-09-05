@@ -82,8 +82,8 @@ public final class ViewfinderView extends View {
         if (isInEditMode()) {
             int screenWidth = getResources().getDisplayMetrics().widthPixels;
             int screenHeight = getResources().getDisplayMetrics().heightPixels;
-            int width = 720;
-            int height = 720;
+            int width = 675;
+            int height = 675;
             int leftOffset = (screenWidth - width) / 2;
             int topOffset = (screenHeight - height) / 2;
             frame = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
@@ -135,7 +135,7 @@ public final class ViewfinderView extends View {
             canvas.drawRect(frame.left + 10, frame.top, frame.right - 10, frame.top + 10, paint);
 
             translateY += 5f;
-            if (translateY >= 710) {
+            if (translateY >= 670) {
                 translateY = 5f;
             }
 
