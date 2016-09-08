@@ -51,7 +51,7 @@ repositories {
 
 ### Add dependency
 ``` gradle
-compile('com.github.XuDaojie:QRCode-Android:v0.1.2', {
+compile('com.github.XuDaojie:QRCode-Android:v0.1.3', {
     exclude group: 'com.android.support'
 })
 // 6.0权限控制需要support支持

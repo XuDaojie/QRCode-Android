@@ -16,7 +16,9 @@
 
 package io.github.xudaojie.qrcodelib.zxing.camera;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -216,6 +218,10 @@ public final class CameraManager {
     public Rect getFramingRect() {
         Point screenResolution = configManager.getScreenResolution();
         if (framingRect == null) {
+            // 魅族等机型拒绝camera权限后screenResolution返回null
+            if (screenResolution == null) {
+                return null;
+            }
             if (camera == null) {
                 return null;
             }
@@ -368,5 +374,28 @@ public final class CameraManager {
             } else
                 return false;
         }
+    }
+
+    /**
+     * 检查是否获得摄像头权限
+     * @return
+     */
+    public int checkCamesraPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return context.checkSelfPermission(Manifest.permission.CAMERA);
+        } else {
+            if (camera == null) {
+                return PackageManager.PERMISSION_DENIED;
+            }
+        }
+        return PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * 是否已开启预览模式
+     * @return
+     */
+    public boolean isPreviewing() {
+        return previewing;
     }
 }

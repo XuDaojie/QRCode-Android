@@ -17,6 +17,7 @@
 package io.github.xudaojie.qrcodelib.zxing.view;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -59,6 +60,7 @@ public final class ViewfinderView extends View {
     private Collection<ResultPoint> lastPossibleResultPoints;
 
     private float translateY = 5f;
+    private int cameraPermission = PackageManager.PERMISSION_DENIED;
 
     // This constructor is used when the class is built from an XML resource.
     public ViewfinderView(Context context, AttributeSet attrs) {
@@ -78,20 +80,21 @@ public final class ViewfinderView extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
-        Rect frame;
-        if (isInEditMode()) {
+        if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
+            cameraPermission = CameraManager.get().checkCamesraPermission();
+        }
+
+        Rect frame = CameraManager.get().getFramingRect();;
+        if (frame == null) {
+            // Android Studio中预览时和未获得相机权限时都为null
             int screenWidth = getResources().getDisplayMetrics().widthPixels;
             int screenHeight = getResources().getDisplayMetrics().heightPixels;
             int width = 675;
             int height = 675;
             int leftOffset = (screenWidth - width) / 2;
             int topOffset = (screenHeight - height) / 2;
-            frame = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
-        } else {
-            frame = CameraManager.get().getFramingRect();
-        }
-        if (frame == null) {
-            return;
+            frame = new Rect(leftOffset, topOffset - 120, leftOffset + width, topOffset + height - 120);
+//            return;
         }
         int width = canvas.getWidth();
         int height = canvas.getHeight();
@@ -210,9 +213,16 @@ public final class ViewfinderView extends View {
     }
 
     private void drawText(Canvas canvas, Rect frame) {
-        paint.setColor(Color.GRAY);
-        paint.setTextSize(36);
-        String text = "将二维码/条形码置于框内即自动扫描";
-        canvas.drawText(text, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+        if (cameraPermission == PackageManager.PERMISSION_GRANTED) {
+            paint.setColor(Color.GRAY);
+            paint.setTextSize(36);
+            String text = "将二维码/条形码置于框内即自动扫描";
+            canvas.drawText(text, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+        } else {
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(36);
+            String text = "请允许访问摄像头后重试";
+            canvas.drawText(text, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+        }
     }
 }
