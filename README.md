@@ -2,6 +2,8 @@ QRCode
 ===
 minSdkVersion >= 14<br>
 本项目依赖于[ZXing](https://github.com/zxing/zxing) 3.2.1<br>
+对6.0以上和第三方ROM自带的权限增加了权限判断
+
 ![Scan](https://github.com/XuDaojie/QRCode-Android/blob/master/art/scan_qrcode.gif)
 
 ## Use
