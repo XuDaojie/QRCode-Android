@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,15 +24,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK
-                && requestCode == REQUEST_QR_CODE
-                && data != null) {
-            String result = data.getStringExtra("result");
-            Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == RESULT_OK
+//                && requestCode == REQUEST_QR_CODE
+//                && data != null) {
+//            String result = data.getStringExtra("result");
+//            Toast.makeText(MainActivity.this, result, Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
 }

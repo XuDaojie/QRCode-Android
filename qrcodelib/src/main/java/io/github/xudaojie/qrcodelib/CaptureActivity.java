@@ -248,7 +248,6 @@ public class CaptureActivity extends Activity implements Callback {
     }
 
     protected void handleResult(String resultString) {
-        //FIXME
         if (resultString.equals("")) {
             Toast.makeText(CaptureActivity.this, R.string.scan_failed, Toast.LENGTH_SHORT).show();
         } else {
