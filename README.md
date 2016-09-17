@@ -22,7 +22,7 @@ minSdkVersion >= 14<br>
 ```
 
 ### Code
-`CaptureActivity` 对二维码扫描信息默认是将扫描结果传回上一个界面,如果你要在`CaptureActivity`中直接处理,则需要重写`handleResult(String resultString)`方法
+`CaptureActivity` 对二维码扫描信息默认是将扫描结果传回上一个界面,如果你要在`CaptureActivity`中直接处理,可通过重写`handleResult(String resultString)`实现
 
 1. 默认
 
@@ -77,11 +77,7 @@ repositories {
 
 ### Add dependency
 ``` gradle
-compile('com.github.XuDaojie:QRCode-Android:v0.1.3', {
-    exclude group: 'com.android.support'
-})
-// 6.0权限控制需要support支持
-compile 'com.android.support:appcompat-v7:$supportVersion'
+compile 'com.github.XuDaojie:QRCode-Android:v0.2.1'
 ```
 
 ## 吃水不忘挖井人
