@@ -50,7 +50,7 @@ public class SimpleCaptureActivity extends CaptureActivity {
      @Override
     protected void handleResult(String resultString) {
         if (resultString.equals("")) {
-            Toast.makeText(mActivity, io.github.xudaojie.qrcodelib.R.string.scan_failed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.scan_failed, Toast.LENGTH_SHORT).show();
             restartPreview();
         } else {
             // TODO: 16/9/17 ... 
@@ -61,7 +61,7 @@ public class SimpleCaptureActivity extends CaptureActivity {
 ```
 
 > Tips
-> 如果你的操作不会触发`SimpleCaptureActivity`的`onPause`、`onResume`生命周期,则需要在完成操作后,调用`restartPreview()`
+> 如果你的操作不会触发`SimpleCaptureActivity`的`onPause`、`onResume`生命周期,则需要在完成操作后,调用`restartPreview()`以重新启动扫描
 
 ## Including in your project
 
