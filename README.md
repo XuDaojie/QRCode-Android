@@ -25,7 +25,7 @@ minSdkVersion >= 14<br>
 ### Code
 `CaptureActivity` 对二维码扫描信息默认是将扫描结果传回上一个界面,如果你要在`CaptureActivity`中直接处理,可通过重写`handleResult(String resultString)`实现
 
-1. 默认
+#### 默认
 
 ``` java
 Intent i = new Intent(mContent, CaptureActivity.class);
@@ -44,7 +44,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 }
 ```
 
-2. 直接在扫描页面处理返回结果
+#### 直接在扫描页面处理返回结果
 
 ``` java
 public class SimpleCaptureActivity extends CaptureActivity {
