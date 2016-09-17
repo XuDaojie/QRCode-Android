@@ -2,6 +2,7 @@ package io.github.xudaojie.qrcodelib;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -19,9 +20,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -98,10 +96,9 @@ public class CaptureActivity extends Activity implements Callback {
         inactivityTimer = new InactivityTimer(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA)
+            if (checkSelfPermission(Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(mActivity,
-                        new String[]{Manifest.permission.CAMERA},
+                requestPermissions(new String[]{Manifest.permission.CAMERA},
                         REQUEST_PERMISSION_CAMERA);
             }
         }
@@ -152,10 +149,9 @@ public class CaptureActivity extends Activity implements Callback {
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                        && ContextCompat.checkSelfPermission(mActivity, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(mActivity,
-                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                             REQUEST_PERMISSION_PHOTO);
                 } else {
                     ActionUtils.startActivityForGallery(mActivity, ActionUtils.PHOTO_REQUEST_GALLERY);
