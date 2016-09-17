@@ -1,5 +1,6 @@
 QRCode
 ===
+[![JitPack](https://jitpack.io/v/XuDaojie/QRCode-Android.svg)](https://jitpack.io/#XuDaojie/QRCode-Android)<br>
 minSdkVersion >= 14<br>
 本项目依赖于[ZXing](https://github.com/zxing/zxing) 3.2.1<br>
 对6.0以上和第三方ROM自带的权限增加了权限判断
@@ -60,7 +61,7 @@ public class SimpleCaptureActivity extends CaptureActivity {
 }
 ```
 
-> Tips
+> Tips<br>
 > 如果你的操作不会触发`SimpleCaptureActivity`的`onPause`、`onResume`生命周期,则需要在完成操作后,调用`restartPreview()`以重新启动扫描
 
 ## Including in your project
