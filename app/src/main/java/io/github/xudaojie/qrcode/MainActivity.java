@@ -7,8 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import io.github.xudaojie.qrcodelib.CaptureActivity;
-
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_QR_CODE = 1;
@@ -21,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         qrCodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, CaptureActivity.class);
+                Intent i = new Intent(MainActivity.this, SimpleCaptureActivity.class);
                 MainActivity.this.startActivityForResult(i, REQUEST_QR_CODE);
             }
         });

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">qrcodelib</string>
+    <string name="scan_failed">Scan failed!</string>
 </resources>

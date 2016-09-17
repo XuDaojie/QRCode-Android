@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name="io.github.xudaojie.qrcodelib.CaptureActivity"/>
+        <activity android:name=".SimpleCaptureActivity"/>
     </application>
 
 </manifest>

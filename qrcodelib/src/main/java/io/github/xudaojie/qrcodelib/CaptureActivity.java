@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -154,7 +155,7 @@ public class CaptureActivity extends Activity implements Callback {
                         && ContextCompat.checkSelfPermission(mActivity, Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(mActivity,
-                            new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                             REQUEST_PERMISSION_PHOTO);
                 } else {
                     ActionUtils.startActivityForGallery(mActivity, ActionUtils.PHOTO_REQUEST_GALLERY);
@@ -191,6 +192,7 @@ public class CaptureActivity extends Activity implements Callback {
             Cursor cursor = getContentResolver().query(inputUri, proj, null, null, null);
             if (cursor.moveToFirst()) {
                 String path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+                // FIXME: 16/9/17 Photo图片为空
                 Result result = QrUtils.decodeImage(path);
                 if (result != null) {
                     if (BuildConfig.DEBUG) Log.d(TAG, result.getText());
@@ -246,9 +248,13 @@ public class CaptureActivity extends Activity implements Callback {
         inactivityTimer.onActivity();
         playBeepSoundAndVibrate();
         String resultString = result.getText();
+        handleResult(resultString);
+    }
+
+    protected void handleResult(String resultString) {
         //FIXME
         if (resultString.equals("")) {
-            Toast.makeText(CaptureActivity.this, "Scan failed!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CaptureActivity.this, R.string.scan_failed, Toast.LENGTH_SHORT).show();
         } else {
 //            System.out.println("Result:" + resultString);
             Intent resultIntent = new Intent();
@@ -305,7 +311,12 @@ public class CaptureActivity extends Activity implements Callback {
 
     public void drawViewfinder() {
         viewfinderView.drawViewfinder();
+    }
 
+    protected void restartPreview() {
+        Message restartMessage = Message.obtain();
+        restartMessage.what = R.id.restart_preview;
+        handler.handleMessage(restartMessage);
     }
 
     private void initBeepSound() {
