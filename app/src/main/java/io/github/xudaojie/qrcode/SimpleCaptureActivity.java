@@ -44,6 +44,7 @@ public class SimpleCaptureActivity extends CaptureActivity {
                 });
             }
             if (!mDialog.isShowing()) {
+                mDialog.setMessage(resultString);
                 mDialog.show();
             }
         }
