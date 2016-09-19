@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import io.github.xudaojie.qrcodelib.CaptureActivity;
@@ -13,7 +14,7 @@ import io.github.xudaojie.qrcodelib.CaptureActivity;
  */
 
 public class SimpleCaptureActivity extends CaptureActivity {
-    protected Activity mActivity;
+    protected Activity mActivity = this;
 
     private AlertDialog mDialog;
 
@@ -25,7 +26,7 @@ public class SimpleCaptureActivity extends CaptureActivity {
 
     @Override
     protected void handleResult(String resultString) {
-        if (resultString.equals("")) {
+        if (TextUtils.isEmpty(resultString)) {
             Toast.makeText(mActivity, io.github.xudaojie.qrcodelib.R.string.scan_failed, Toast.LENGTH_SHORT).show();
             restartPreview();
         } else {
