@@ -13,4 +13,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="扫一扫"/>
+
+    <ImageView
+        android:id="@+id/code_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

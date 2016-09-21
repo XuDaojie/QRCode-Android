@@ -1,10 +1,16 @@
 package io.github.xudaojie.qrcode;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+
+import com.google.zxing.WriterException;
+
+import io.github.xudaojie.qrcodelib.zxing.encoding.EncodingHandler;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final Button qrCodeBtn = (Button) findViewById(R.id.qrcode_btn);
+        final ImageView codeIv = (ImageView) findViewById(R.id.code_iv);
         qrCodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -22,6 +29,13 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivityForResult(i, REQUEST_QR_CODE);
             }
         });
+        try {
+//            Bitmap bitmap = EncodingHandler.createQRCode("账号 xudaojieg@gmail.com", 500);
+            Bitmap bitmap = EncodingHandler.encodeAsBitmap();
+            codeIv.setImageBitmap(bitmap);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
     }
 
 //    @Override
