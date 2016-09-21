@@ -25,6 +25,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -56,6 +57,10 @@ public final class ViewfinderView extends View {
     private final int laserColor;
     private final int resultPointColor;
     private final int angleColor;
+    private String hint;
+    private int hintColor;
+    private String errorHint;
+    private int errorHintColor;
     private Bitmap resultBitmap;
     private int scannerAlpha;
     private Collection<ResultPoint> possibleResultPoints;
@@ -70,6 +75,17 @@ public final class ViewfinderView extends View {
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.qr_ViewfinderView);
         angleColor = typedArray.getColor(R.styleable.qr_ViewfinderView_qr_angleColor, Color.WHITE);
+        hint = typedArray.getString(R.styleable.qr_ViewfinderView_qr_hint);
+        hintColor = typedArray.getColor(R.styleable.qr_ViewfinderView_qr_textHintColor, Color.GRAY);
+        errorHint = typedArray.getString(R.styleable.qr_ViewfinderView_qr_errorHint);
+        errorHintColor = typedArray.getColor(R.styleable.qr_ViewfinderView_qr_textErrorHintColor, Color.WHITE);
+
+        if (TextUtils.isEmpty(hint)) {
+            hint = "将二维码/条形码置于框内即自动扫描";
+        }
+        if (TextUtils.isEmpty(errorHint)) {
+            errorHint = "请允许访问摄像头后重试";
+        }
 
         // Initialize these once for performance rather than calling them every time in onDraw().
         paint = new Paint();
@@ -81,6 +97,8 @@ public final class ViewfinderView extends View {
         resultPointColor = resources.getColor(R.color.possible_result_points);
         scannerAlpha = 0;
         possibleResultPoints = new HashSet<ResultPoint>(5);
+
+        typedArray.recycle();
     }
 
     @Override
@@ -125,6 +143,7 @@ public final class ViewfinderView extends View {
 
             // Draw a two pixel solid black border inside the framing rect
 //            paint.setColor(frameColor);
+            paint.setColor(Color.GRAY);
             canvas.drawRect(frame.left, frame.top, frame.right + 1, frame.top + 2, paint);
             canvas.drawRect(frame.left, frame.top + 2, frame.left + 2, frame.bottom - 1, paint);
             canvas.drawRect(frame.right - 1, frame.top, frame.right + 1, frame.bottom - 1, paint);
@@ -223,15 +242,15 @@ public final class ViewfinderView extends View {
 
     private void drawText(Canvas canvas, Rect frame) {
         if (cameraPermission == PackageManager.PERMISSION_GRANTED) {
-            paint.setColor(Color.GRAY);
+            paint.setColor(hintColor);
             paint.setTextSize(36);
-            String text = "将二维码/条形码置于框内即自动扫描";
-            canvas.drawText(text, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+            String text = hint;
+            canvas.drawText(hint, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
         } else {
-            paint.setColor(Color.WHITE);
+            paint.setColor(errorHintColor);
             paint.setTextSize(36);
-            String text = "请允许访问摄像头后重试";
-            canvas.drawText(text, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+            String text = errorHint;
+            canvas.drawText(errorHint, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
         }
     }
 }

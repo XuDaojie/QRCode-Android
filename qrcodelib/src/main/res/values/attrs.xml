@@ -2,7 +2,9 @@
 <resources>
     <declare-styleable name="qr_ViewfinderView">
         <attr name="qr_angleColor" format="color"/>
-        <attr name="qr_textHintColor" format="color"/>
         <attr name="qr_hint" format="string"/>
+        <attr name="qr_textHintColor" format="color"/>
+        <attr name="qr_errorHint" format="string"/>
+        <attr name="qr_textErrorHintColor" format="color"/>
     </declare-styleable>
 </resources>
