@@ -81,7 +81,7 @@ public final class ViewfinderView extends View {
     @Override
     public void onDraw(Canvas canvas) {
         if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
-            cameraPermission = CameraManager.get().checkCamesraPermission();
+            cameraPermission = CameraManager.get().checkCameraPermission();
         }
 
         Rect frame = CameraManager.get().getFramingRect();;
