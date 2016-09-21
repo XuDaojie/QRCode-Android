@@ -398,4 +398,12 @@ public final class CameraManager {
     public boolean isPreviewing() {
         return previewing;
     }
+
+    /**
+     * 监听散光灯状态
+     */
+    public interface FlashLightListener {
+        void onOpen();
+        void onOff();
+    }
 }

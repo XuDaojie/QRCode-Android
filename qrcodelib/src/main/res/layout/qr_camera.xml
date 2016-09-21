@@ -17,8 +17,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         xdj:qr_angleColor="@android:color/holo_blue_dark"
-        xdj:qr_errorHint="请允许访问摄像头后重试"
         xdj:qr_hint="将二维码/条形码置于框内即自动扫描"
+        xdj:qr_errorHint="请允许访问摄像头后重试"
         xdj:qr_textHintColor="@android:color/darker_gray"
         xdj:qr_textErrorHintColor="@android:color/white"/>
 
