@@ -380,7 +380,7 @@ public final class CameraManager {
      * 检查是否获得摄像头权限
      * @return
      */
-    public int checkCamesraPermission() {
+    public int checkCameraPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return context.checkSelfPermission(Manifest.permission.CAMERA);
         } else {
