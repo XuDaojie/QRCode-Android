@@ -66,6 +66,8 @@ public final class ViewfinderView extends View {
     public ViewfinderView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+
+
         // Initialize these once for performance rather than calling them every time in onDraw().
         paint = new Paint();
         Resources resources = getResources();
@@ -80,11 +82,15 @@ public final class ViewfinderView extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
-            cameraPermission = CameraManager.get().checkCameraPermission();
+        Rect frame = null;
+        if (!isInEditMode()) {
+            if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
+                cameraPermission = CameraManager.get().checkCameraPermission();
+            }
+            frame = CameraManager.get().getFramingRect();
         }
 
-        Rect frame = CameraManager.get().getFramingRect();;
+
         if (frame == null) {
             // Android Studio中预览时和未获得相机权限时都为null
             int screenWidth = getResources().getDisplayMetrics().widthPixels;
