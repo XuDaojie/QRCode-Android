@@ -84,7 +84,7 @@ public class CaptureActivity extends Activity implements Callback {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.camera);
+        setContentView(R.layout.qr_camera);
         mActivity = this;
         //ViewUtil.addTopView(getApplicationContext(), this, R.string.scan_card);
         CameraManager.init(getApplication());

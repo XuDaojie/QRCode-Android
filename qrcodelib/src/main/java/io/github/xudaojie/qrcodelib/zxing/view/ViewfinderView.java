@@ -19,6 +19,7 @@ package io.github.xudaojie.qrcodelib.zxing.view;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -54,6 +55,7 @@ public final class ViewfinderView extends View {
     private final int frameColor;
     private final int laserColor;
     private final int resultPointColor;
+    private final int angleColor;
     private Bitmap resultBitmap;
     private int scannerAlpha;
     private Collection<ResultPoint> possibleResultPoints;
@@ -66,7 +68,8 @@ public final class ViewfinderView extends View {
     public ViewfinderView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.qr_ViewfinderView);
+        angleColor = typedArray.getColor(R.styleable.qr_ViewfinderView_qr_angleColor, Color.WHITE);
 
         // Initialize these once for performance rather than calling them every time in onDraw().
         paint = new Paint();
@@ -203,7 +206,7 @@ public final class ViewfinderView extends View {
         int left = frame.left;
         int right = frame.right;
 
-        paint.setColor(Color.WHITE);
+        paint.setColor(angleColor);
         // 左上
         canvas.drawRect(left - angleWidth, top - angleWidth, left + angleLength, top, paint);
         canvas.drawRect(left - angleWidth, top - angleWidth, left, top + angleLength, paint);

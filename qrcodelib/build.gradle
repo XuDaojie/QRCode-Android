@@ -8,6 +8,8 @@ android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
 
+    resourcePrefix "qr"
+
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 24

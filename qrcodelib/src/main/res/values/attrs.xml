@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="qr_ViewfinderView">
+        <attr name="qr_angleColor" format="color"/>
+        <attr name="qr_textHintColor" format="color"/>
+        <attr name="qr_hint" format="string"/>
+    </declare-styleable>
+</resources>
