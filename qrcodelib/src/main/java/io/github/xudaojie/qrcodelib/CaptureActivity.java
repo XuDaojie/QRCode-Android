@@ -265,6 +265,10 @@ public class CaptureActivity extends Activity implements Callback {
         });
     }
 
+    protected void setViewfinderView(ViewfinderView view) {
+        viewfinderView = view;
+    }
+
     /**
      * 切换散光灯状态
      */
