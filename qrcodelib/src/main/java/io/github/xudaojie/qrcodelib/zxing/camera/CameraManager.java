@@ -399,11 +399,4 @@ public final class CameraManager {
         return previewing;
     }
 
-    /**
-     * 监听散光灯状态
-     */
-    public interface FlashLightListener {
-        void onOpen();
-        void onOff();
-    }
 }

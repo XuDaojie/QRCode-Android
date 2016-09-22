@@ -74,8 +74,6 @@ public class CaptureActivity extends Activity implements Callback {
     private ImageButton flashIbtn;
     private TextView galleryTv;
 
-    private CameraManager.FlashLightListener flashLightListener;
-
     /**
      * Called when the activity is first created.
      */
@@ -128,8 +126,8 @@ public class CaptureActivity extends Activity implements Callback {
             handler.quitSynchronously();
             handler = null;
         }
-        if (flashLightOpen) {
-            setFlashLightOpen(false);
+        if (flashIbtn != null) {
+            flashIbtn.setImageResource(R.drawable.ic_flash_off_white_24dp);
         }
         CameraManager.get().closeDriver();
     }
@@ -234,17 +232,6 @@ public class CaptureActivity extends Activity implements Callback {
         flashIbtn = (ImageButton) findViewById(R.id.flash_ibtn);
         galleryTv = (TextView) findViewById(R.id.gallery_tv);
 
-        setFlashLightListener(new CameraManager.FlashLightListener() {
-            @Override
-            public void onOpen() {
-                flashIbtn.setImageResource(R.drawable.ic_flash_on_white_24dp);
-            }
-
-            @Override
-            public void onOff() {
-                flashIbtn.setImageResource(R.drawable.ic_flash_off_white_24dp);
-            }
-        });
         backIbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -254,6 +241,11 @@ public class CaptureActivity extends Activity implements Callback {
         flashIbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (flashLightOpen) {
+                    flashIbtn.setImageResource(R.drawable.ic_flash_off_white_24dp);
+                } else {
+                    flashIbtn.setImageResource(R.drawable.ic_flash_on_white_24dp);
+                }
                 toggleFlashLight();
             }
         });
@@ -287,15 +279,6 @@ public class CaptureActivity extends Activity implements Callback {
     public void setFlashLightOpen(boolean open) {
         if (flashLightOpen == open) return;
 
-        if (flashLightOpen) {
-            if (flashLightListener != null) {
-                flashLightListener.onOff();
-            }
-        } else {
-            if (flashLightListener != null) {
-                flashLightListener.onOpen();
-            }
-        }
         flashLightOpen = !flashLightOpen;
         CameraManager.get().setFlashLight(open);
     }
@@ -306,10 +289,6 @@ public class CaptureActivity extends Activity implements Callback {
      */
     public boolean isFlashLightOpen() {
         return flashLightOpen;
-    }
-
-    public void setFlashLightListener(CameraManager.FlashLightListener lightListener) {
-        this.flashLightListener = lightListener;
     }
 
     /**
