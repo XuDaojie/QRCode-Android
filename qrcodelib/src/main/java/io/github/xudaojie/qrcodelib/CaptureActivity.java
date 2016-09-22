@@ -82,10 +82,7 @@ public class CaptureActivity extends Activity implements Callback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         mActivity = this;
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
@@ -228,7 +225,10 @@ public class CaptureActivity extends Activity implements Callback {
     }
 
     protected void initView() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.qr_camera);
+
         backIbtn = (ImageView) findViewById(R.id.back_ibtn);
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
         flashIbtn = (ImageButton) findViewById(R.id.flash_ibtn);
