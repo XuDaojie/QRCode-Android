@@ -260,14 +260,7 @@ public class CaptureActivity extends Activity implements Callback {
         galleryTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                        && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                            REQUEST_PERMISSION_PHOTO);
-                } else {
-                    ActionUtils.startActivityForGallery(mActivity, ActionUtils.PHOTO_REQUEST_GALLERY);
-                }
+                openGallery();
             }
         });
     }
@@ -313,6 +306,20 @@ public class CaptureActivity extends Activity implements Callback {
 
     public void setFlashLightListener(CameraManager.FlashLightListener lightListener) {
         this.flashLightListener = lightListener;
+    }
+
+    /**
+     * 打开相册
+     */
+    public void openGallery() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_PERMISSION_PHOTO);
+        } else {
+            ActionUtils.startActivityForGallery(mActivity, ActionUtils.PHOTO_REQUEST_GALLERY);
+        }
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
