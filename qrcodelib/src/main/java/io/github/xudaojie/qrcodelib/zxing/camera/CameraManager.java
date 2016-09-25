@@ -241,7 +241,10 @@ public final class CameraManager {
             }
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 2;
-            framingRect = new Rect(leftOffset, topOffset - offsetX, leftOffset + width, topOffset + height - offsetX);
+            framingRect = new Rect(leftOffset + offsetX,
+                    topOffset + offsetY,
+                    leftOffset + width + offsetX,
+                    topOffset + height + offsetY);
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;

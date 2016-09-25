@@ -8,5 +8,6 @@
         <attr name="qr_textErrorHintColor" format="color"/>
         <attr name="qr_offsetX" format="integer"/>
         <attr name="qr_offsetY" format="integer"/>
+        <attr name="qr_showPossiblePoint" format="boolean"/>
     </declare-styleable>
 </resources>
