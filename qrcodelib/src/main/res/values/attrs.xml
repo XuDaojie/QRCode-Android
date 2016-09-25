@@ -6,5 +6,7 @@
         <attr name="qr_textHintColor" format="color"/>
         <attr name="qr_errorHint" format="string"/>
         <attr name="qr_textErrorHintColor" format="color"/>
+        <attr name="qr_offsetX" format="integer"/>
+        <attr name="qr_offsetY" format="integer"/>
     </declare-styleable>
 </resources>

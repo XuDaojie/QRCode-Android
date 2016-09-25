@@ -46,9 +46,13 @@ import io.github.xudaojie.qrcodelib.zxing.camera.CameraManager;
  */
 public final class ViewfinderView extends View {
 
+    public static int RECT_OFFSET_X; // 扫描区域偏移量 默认位于屏幕中间
+    public static int RECT_OFFSET_Y;
+
     private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192, 128, 64};
     private static final long ANIMATION_DELAY = 10L;
     private static final int OPAQUE = 0xFF;
+
 
     private final Paint paint;
     private final int maskColor;
@@ -79,6 +83,8 @@ public final class ViewfinderView extends View {
         hintColor = typedArray.getColor(R.styleable.qr_ViewfinderView_qr_textHintColor, Color.GRAY);
         errorHint = typedArray.getString(R.styleable.qr_ViewfinderView_qr_errorHint);
         errorHintColor = typedArray.getColor(R.styleable.qr_ViewfinderView_qr_textErrorHintColor, Color.WHITE);
+        RECT_OFFSET_X = typedArray.getInt(R.styleable.qr_ViewfinderView_qr_offsetX, 0);
+        RECT_OFFSET_Y = typedArray.getInt(R.styleable.qr_ViewfinderView_qr_offsetX, 0);
 
         if (TextUtils.isEmpty(hint)) {
             hint = "将二维码/条形码置于框内即自动扫描";
@@ -108,9 +114,8 @@ public final class ViewfinderView extends View {
             if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
                 cameraPermission = CameraManager.get().checkCameraPermission();
             }
-            frame = CameraManager.get().getFramingRect();
+            frame = CameraManager.get().getFramingRect(RECT_OFFSET_X, RECT_OFFSET_Y);
         }
-
 
         if (frame == null) {
             // Android Studio中预览时和未获得相机权限时都为null
@@ -120,7 +125,7 @@ public final class ViewfinderView extends View {
             int height = 675;
             int leftOffset = (screenWidth - width) / 2;
             int topOffset = (screenHeight - height) / 2;
-            frame = new Rect(leftOffset, topOffset - 120, leftOffset + width, topOffset + height - 120);
+            frame = new Rect(leftOffset, topOffset - RECT_OFFSET_X, leftOffset + width, topOffset + height - RECT_OFFSET_Y);
 //            return;
         }
         int width = canvas.getWidth();
@@ -170,27 +175,7 @@ public final class ViewfinderView extends View {
                 translateY = 5f;
             }
 
-//            // Draw a yellow "possible points"
-//            Collection<ResultPoint> currentPossible = possibleResultPoints;
-//            Collection<ResultPoint> currentLast = lastPossibleResultPoints;
-//            if (currentPossible.isEmpty()) {
-//                lastPossibleResultPoints = null;
-//            } else {
-//                possibleResultPoints = new HashSet<ResultPoint>(5);
-//                lastPossibleResultPoints = currentPossible;
-//                paint.setAlpha(OPAQUE);
-//                paint.setColor(resultPointColor);
-//                for (ResultPoint point : currentPossible) {
-//                    canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 6.0f, paint);
-//                }
-//            }
-//            if (currentLast != null) {
-//                paint.setAlpha(OPAQUE / 2);
-//                paint.setColor(resultPointColor);
-//                for (ResultPoint point : currentLast) {
-//                    canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 3.0f, paint);
-//                }
-//            }
+            drawPossiblePaint(canvas, frame);
 
             // Request another update at the animation interval, but only repaint the laser line,
             // not the entire viewfinder mask.
@@ -251,6 +236,30 @@ public final class ViewfinderView extends View {
             paint.setTextSize(36);
             String text = errorHint;
             canvas.drawText(errorHint, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+        }
+    }
+
+    // Draw a yellow "possible points"
+    private void drawPossiblePaint(Canvas canvas, Rect frame) {
+        Collection<ResultPoint> currentPossible = possibleResultPoints;
+        Collection<ResultPoint> currentLast = lastPossibleResultPoints;
+        if (currentPossible.isEmpty()) {
+            lastPossibleResultPoints = null;
+        } else {
+            possibleResultPoints = new HashSet<ResultPoint>(5);
+            lastPossibleResultPoints = currentPossible;
+            paint.setAlpha(OPAQUE);
+            paint.setColor(resultPointColor);
+            for (ResultPoint point : currentPossible) {
+                canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 6.0f, paint);
+            }
+        }
+        if (currentLast != null) {
+            paint.setAlpha(OPAQUE / 2);
+            paint.setColor(resultPointColor);
+            for (ResultPoint point : currentLast) {
+                canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 3.0f, paint);
+            }
         }
     }
 }
