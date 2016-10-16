@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "io.github.xudaojie.qrcode"
         minSdkVersion 15
@@ -20,7 +20,8 @@ android {
 }
 
 repositories {
-    maven { url "http://repo1.maven.org/maven2" }
+    mavenCentral()
+//    maven { url "http://repo1.maven.org/maven2" }
     maven { url "https://jitpack.io" }
 //    maven { url "https://mvnrepository.com/artifact" }
 }
@@ -32,6 +33,6 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.2.1'
-    compile project(':qrcodelib')
-//    compile 'com.github.XuDaojie:QRCode-Android:v0.2.1'
+//    compile project(':qrcodelib')
+    compile 'com.github.XuDaojie:QRCode-Android:v0.3.3'
 }
