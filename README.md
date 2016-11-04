@@ -1,7 +1,7 @@
 QRCode
 ===
-[![JitPack](https://jitpack.io/v/XuDaojie/QRCode-Android.svg)](https://jitpack.io/#XuDaojie/QRCode-Android)<br>
-minSdkVersion >= 14<br>
+[![JitPack](https://jitpack.io/v/XuDaojie/QRCode-Android.svg)](https://jitpack.io/#XuDaojie/QRCode-Android)
+[![API](https://img.shields.io/badge/API-14%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=14) <br>
 本项目依赖于[ZXing](https://github.com/zxing/zxing) 3.2.1<br>
 对6.0以上和第三方ROM自带的权限增加了权限判断
 
@@ -78,7 +78,7 @@ repositories {
 
 ### Add dependency
 ``` gradle
-compile 'com.github.XuDaojie:QRCode-Android:v0.2.1'
+compile 'com.github.XuDaojie:QRCode-Android:v0.4.0'
 ```
 
 ## 吃水不忘挖井人

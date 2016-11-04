@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:xdj="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:context=".CaptureActivity">
@@ -14,40 +15,41 @@
     <io.github.xudaojie.qrcodelib.zxing.view.ViewfinderView
         android:id="@+id/viewfinder_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        xdj:qr_angleColor="@color/qr_blue"
+        xdj:qr_errorHint="请允许访问摄像头后重试"
+        xdj:qr_hint="将二维码/条形码置于框内即自动扫描"
+        xdj:qr_textErrorHintColor="@android:color/white"
+        xdj:qr_textHintColor="@android:color/darker_gray"
+        xdj:qr_showPossiblePoint="true"
+        xdj:qr_offsetX="0"
+        xdj:qr_offsetY="-120"/>
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/actionBarSize">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/back_ibtn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="?android:attr/actionBarSize">
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:minWidth="?android:attr/actionBarSize"
+            android:minHeight="?android:attr/actionBarSize"
+            android:src="@drawable/ic_back"/>
 
-            <ImageButton
-                android:id="@+id/back_ibtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@null"
-                android:paddingLeft="12dp"
-                android:src="@drawable/ic_back"/>
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:text="扫一扫"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                tools:textColor="@android:color/black"/>
-        </RelativeLayout>
-
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="扫一扫"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            tools:textColor="@android:color/black"/>
     </RelativeLayout>
 
     <RelativeLayout

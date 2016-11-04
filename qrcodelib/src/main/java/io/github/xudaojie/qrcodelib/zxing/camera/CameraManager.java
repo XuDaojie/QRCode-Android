@@ -31,6 +31,8 @@ import android.view.SurfaceHolder;
 import java.io.IOException;
 import java.util.List;
 
+import io.github.xudaojie.qrcodelib.zxing.view.ViewfinderView;
+
 /**
  * This object wraps the Camera service object and expects to be the only one talking to it. The
  * implementation encapsulates the steps needed to take preview-sized images, which are used for
@@ -213,9 +215,9 @@ public final class CameraManager {
      *
      * @return The rectangle to draw on screen in window coordinates.
      *
-     * 获取扫描框显示位置
+     * 获取扫描框显示位置 默认位置为屏幕中间
      */
-    public Rect getFramingRect() {
+    public Rect getFramingRect(int offsetX, int offsetY) {
         Point screenResolution = configManager.getScreenResolution();
         if (framingRect == null) {
             // 魅族等机型拒绝camera权限后screenResolution返回null
@@ -239,7 +241,10 @@ public final class CameraManager {
             }
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 2;
-            framingRect = new Rect(leftOffset, topOffset - 120, leftOffset + width, topOffset + height - 120);
+            framingRect = new Rect(leftOffset + offsetX,
+                    topOffset + offsetY,
+                    leftOffset + width + offsetX,
+                    topOffset + height + offsetY);
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;
@@ -253,7 +258,7 @@ public final class CameraManager {
      */
     public Rect getFramingRectInPreview() {
         if (framingRectInPreview == null) {
-            Rect rect = new Rect(getFramingRect());
+            Rect rect = new Rect(getFramingRect(ViewfinderView.RECT_OFFSET_X, ViewfinderView.RECT_OFFSET_Y));
             Point cameraResolution = configManager.getCameraResolution();
             Point screenResolution = configManager.getScreenResolution();
             //modify here
@@ -398,4 +403,5 @@ public final class CameraManager {
     public boolean isPreviewing() {
         return previewing;
     }
+
 }

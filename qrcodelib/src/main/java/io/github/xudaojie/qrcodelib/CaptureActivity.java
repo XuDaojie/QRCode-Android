@@ -69,11 +69,10 @@ public class CaptureActivity extends Activity implements Callback {
     private boolean playBeep;
     private static final float BEEP_VOLUME = 0.10f;
     private boolean vibrate;
-    private boolean allowOpenLight = true;
+    private boolean flashLightOpen = false;
     private ImageView backIbtn;
     private ImageButton flashIbtn;
     private TextView galleryTv;
-
 
     /**
      * Called when the activity is first created.
@@ -81,20 +80,11 @@ public class CaptureActivity extends Activity implements Callback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.camera);
         mActivity = this;
-        //ViewUtil.addTopView(getApplicationContext(), this, R.string.scan_card);
-        CameraManager.init(getApplication());
-        backIbtn = (ImageView) findViewById(R.id.back_ibtn);
-        viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
-        flashIbtn = (ImageButton) findViewById(R.id.flash_ibtn);
-        galleryTv = (TextView) findViewById(R.id.gallery_tv);
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
-
+        CameraManager.init(getApplication());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -102,6 +92,8 @@ public class CaptureActivity extends Activity implements Callback {
                         REQUEST_PERMISSION_CAMERA);
             }
         }
+
+        initView();
     }
 
     @Override
@@ -125,39 +117,6 @@ public class CaptureActivity extends Activity implements Callback {
         }
         initBeepSound();
         vibrate = true;
-
-        backIbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mActivity.finish();
-            }
-        });
-        flashIbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (allowOpenLight) {
-                    CameraManager.get().setFlashLight(true);
-                    flashIbtn.setImageResource(R.drawable.ic_flash_on_white_24dp);
-                } else {
-                    CameraManager.get().setFlashLight(false);
-                    flashIbtn.setImageResource(R.drawable.ic_flash_off_white_24dp);
-                }
-                allowOpenLight = !allowOpenLight;
-            }
-        });
-        galleryTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                        && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                            REQUEST_PERMISSION_PHOTO);
-                } else {
-                    ActionUtils.startActivityForGallery(mActivity, ActionUtils.PHOTO_REQUEST_GALLERY);
-                }
-            }
-        });
     }
 
     @Override
@@ -166,6 +125,9 @@ public class CaptureActivity extends Activity implements Callback {
         if (handler != null) {
             handler.quitSynchronously();
             handler = null;
+        }
+        if (flashIbtn != null) {
+            flashIbtn.setImageResource(R.drawable.ic_flash_off_white_24dp);
         }
         CameraManager.get().closeDriver();
     }
@@ -251,7 +213,6 @@ public class CaptureActivity extends Activity implements Callback {
         if (resultString.equals("")) {
             Toast.makeText(CaptureActivity.this, R.string.scan_failed, Toast.LENGTH_SHORT).show();
         } else {
-//            System.out.println("Result:" + resultString);
             Intent resultIntent = new Intent();
             Bundle bundle = new Bundle();
             bundle.putString("result", resultString);
@@ -259,6 +220,89 @@ public class CaptureActivity extends Activity implements Callback {
             this.setResult(RESULT_OK, resultIntent);
         }
         mActivity.finish();
+    }
+
+    protected void initView() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.qr_camera);
+
+        backIbtn = (ImageView) findViewById(R.id.back_ibtn);
+        viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
+        flashIbtn = (ImageButton) findViewById(R.id.flash_ibtn);
+        galleryTv = (TextView) findViewById(R.id.gallery_tv);
+
+        backIbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mActivity.finish();
+            }
+        });
+        flashIbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (flashLightOpen) {
+                    flashIbtn.setImageResource(R.drawable.ic_flash_off_white_24dp);
+                } else {
+                    flashIbtn.setImageResource(R.drawable.ic_flash_on_white_24dp);
+                }
+                toggleFlashLight();
+            }
+        });
+        galleryTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openGallery();
+            }
+        });
+    }
+
+    protected void setViewfinderView(ViewfinderView view) {
+        viewfinderView = view;
+    }
+
+    /**
+     * 切换散光灯状态
+     */
+    public void toggleFlashLight() {
+        if (flashLightOpen) {
+            setFlashLightOpen(false);
+        } else {
+            setFlashLightOpen(true);
+        }
+    }
+
+    /**
+     * 设置闪光灯是否打开
+     * @param open
+     */
+    public void setFlashLightOpen(boolean open) {
+        if (flashLightOpen == open) return;
+
+        flashLightOpen = !flashLightOpen;
+        CameraManager.get().setFlashLight(open);
+    }
+
+    /**
+     * 当前散光灯是否打开
+     * @return
+     */
+    public boolean isFlashLightOpen() {
+        return flashLightOpen;
+    }
+
+    /**
+     * 打开相册
+     */
+    public void openGallery() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_PERMISSION_PHOTO);
+        } else {
+            ActionUtils.startActivityForGallery(mActivity, ActionUtils.PHOTO_REQUEST_GALLERY);
+        }
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
@@ -276,9 +320,8 @@ public class CaptureActivity extends Activity implements Callback {
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
-
+    public void surfaceChanged(SurfaceHolder holder, int format,
+                               int width, int height) {
     }
 
     @Override

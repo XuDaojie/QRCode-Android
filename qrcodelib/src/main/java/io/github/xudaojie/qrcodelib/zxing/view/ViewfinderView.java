@@ -19,11 +19,13 @@ package io.github.xudaojie.qrcodelib.zxing.view;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -44,9 +46,13 @@ import io.github.xudaojie.qrcodelib.zxing.camera.CameraManager;
  */
 public final class ViewfinderView extends View {
 
+    public static int RECT_OFFSET_X; // 扫描区域偏移量 默认位于屏幕中间
+    public static int RECT_OFFSET_Y;
+
     private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192, 128, 64};
-    private static final long ANIMATION_DELAY = 10L;
     private static final int OPAQUE = 0xFF;
+    private static long ANIMATION_DELAY = 10L;
+
 
     private final Paint paint;
     private final int maskColor;
@@ -54,6 +60,12 @@ public final class ViewfinderView extends View {
     private final int frameColor;
     private final int laserColor;
     private final int resultPointColor;
+    private final int angleColor;
+    private String hint;
+    private int hintColor;
+    private String errorHint;
+    private int errorHintColor;
+    private boolean showPossiblePoint;
     private Bitmap resultBitmap;
     private int scannerAlpha;
     private Collection<ResultPoint> possibleResultPoints;
@@ -66,6 +78,27 @@ public final class ViewfinderView extends View {
     public ViewfinderView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.qr_ViewfinderView);
+        angleColor = typedArray.getColor(R.styleable.qr_ViewfinderView_qr_angleColor, Color.WHITE);
+        hint = typedArray.getString(R.styleable.qr_ViewfinderView_qr_hint);
+        hintColor = typedArray.getColor(R.styleable.qr_ViewfinderView_qr_textHintColor, Color.GRAY);
+        errorHint = typedArray.getString(R.styleable.qr_ViewfinderView_qr_errorHint);
+        errorHintColor = typedArray.getColor(R.styleable.qr_ViewfinderView_qr_textErrorHintColor, Color.WHITE);
+        showPossiblePoint = typedArray.getBoolean(R.styleable.qr_ViewfinderView_qr_showPossiblePoint, false);
+
+        RECT_OFFSET_X = typedArray.getInt(R.styleable.qr_ViewfinderView_qr_offsetX, 0);
+        RECT_OFFSET_Y = typedArray.getInt(R.styleable.qr_ViewfinderView_qr_offsetY, 0);
+
+        if (TextUtils.isEmpty(hint)) {
+            hint = "将二维码/条形码置于框内即自动扫描";
+        }
+        if (TextUtils.isEmpty(errorHint)) {
+            errorHint = "请允许访问摄像头后重试";
+        }
+        if (showPossiblePoint) {
+            ANIMATION_DELAY = 100L;
+        }
+
         // Initialize these once for performance rather than calling them every time in onDraw().
         paint = new Paint();
         Resources resources = getResources();
@@ -76,15 +109,20 @@ public final class ViewfinderView extends View {
         resultPointColor = resources.getColor(R.color.possible_result_points);
         scannerAlpha = 0;
         possibleResultPoints = new HashSet<ResultPoint>(5);
+
+        typedArray.recycle();
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
-            cameraPermission = CameraManager.get().checkCameraPermission();
+        Rect frame = null;
+        if (!isInEditMode()) {
+            if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
+                cameraPermission = CameraManager.get().checkCameraPermission();
+            }
+            frame = CameraManager.get().getFramingRect(RECT_OFFSET_X, RECT_OFFSET_Y);
         }
 
-        Rect frame = CameraManager.get().getFramingRect();;
         if (frame == null) {
             // Android Studio中预览时和未获得相机权限时都为null
             int screenWidth = getResources().getDisplayMetrics().widthPixels;
@@ -93,7 +131,10 @@ public final class ViewfinderView extends View {
             int height = 675;
             int leftOffset = (screenWidth - width) / 2;
             int topOffset = (screenHeight - height) / 2;
-            frame = new Rect(leftOffset, topOffset - 120, leftOffset + width, topOffset + height - 120);
+            frame = new Rect(leftOffset + RECT_OFFSET_X,
+                    topOffset + RECT_OFFSET_Y,
+                    leftOffset + width + RECT_OFFSET_X,
+                    topOffset + height + RECT_OFFSET_Y);
 //            return;
         }
         int width = canvas.getWidth();
@@ -113,56 +154,19 @@ public final class ViewfinderView extends View {
             paint.setAlpha(OPAQUE);
             canvas.drawBitmap(resultBitmap, frame.left, frame.top, paint);
         } else {
-
             // Draw a two pixel solid black border inside the framing rect
 //            paint.setColor(frameColor);
+            paint.setColor(Color.GRAY);
             canvas.drawRect(frame.left, frame.top, frame.right + 1, frame.top + 2, paint);
             canvas.drawRect(frame.left, frame.top + 2, frame.left + 2, frame.bottom - 1, paint);
             canvas.drawRect(frame.right - 1, frame.top, frame.right + 1, frame.bottom - 1, paint);
             canvas.drawRect(frame.left, frame.bottom - 1, frame.right + 1, frame.bottom + 1, paint);
 
             drawAngle(canvas, frame);
-
-//            // Draw a red "laser scanner" line through the middle to show decoding is active
-//            paint.setColor(laserColor);
-//            paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
-//            scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
-//            int middle = frame.height() / 2 + frame.top;
-//            canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);
-
-            // Draw a red "laser scanner" line through the middle to show decoding is active
-            paint.setColor(Color.parseColor("#03A9F4"));
-//            paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
-            scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
-            canvas.translate(0, translateY);
-            canvas.drawRect(frame.left + 10, frame.top, frame.right - 10, frame.top + 10, paint);
-
-            translateY += 5f;
-            if (translateY >= 670) {
-                translateY = 5f;
+            drawScanner(canvas, frame);
+            if (showPossiblePoint) {
+                drawPossiblePoint(canvas, frame);
             }
-
-//            // Draw a yellow "possible points"
-//            Collection<ResultPoint> currentPossible = possibleResultPoints;
-//            Collection<ResultPoint> currentLast = lastPossibleResultPoints;
-//            if (currentPossible.isEmpty()) {
-//                lastPossibleResultPoints = null;
-//            } else {
-//                possibleResultPoints = new HashSet<ResultPoint>(5);
-//                lastPossibleResultPoints = currentPossible;
-//                paint.setAlpha(OPAQUE);
-//                paint.setColor(resultPointColor);
-//                for (ResultPoint point : currentPossible) {
-//                    canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 6.0f, paint);
-//                }
-//            }
-//            if (currentLast != null) {
-//                paint.setAlpha(OPAQUE / 2);
-//                paint.setColor(resultPointColor);
-//                for (ResultPoint point : currentLast) {
-//                    canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 3.0f, paint);
-//                }
-//            }
 
             // Request another update at the animation interval, but only repaint the laser line,
             // not the entire viewfinder mask.
@@ -197,7 +201,7 @@ public final class ViewfinderView extends View {
         int left = frame.left;
         int right = frame.right;
 
-        paint.setColor(Color.WHITE);
+        paint.setColor(angleColor);
         // 左上
         canvas.drawRect(left - angleWidth, top - angleWidth, left + angleLength, top, paint);
         canvas.drawRect(left - angleWidth, top - angleWidth, left, top + angleLength, paint);
@@ -214,15 +218,62 @@ public final class ViewfinderView extends View {
 
     private void drawText(Canvas canvas, Rect frame) {
         if (cameraPermission == PackageManager.PERMISSION_GRANTED) {
-            paint.setColor(Color.GRAY);
+            paint.setColor(hintColor);
             paint.setTextSize(36);
-            String text = "将二维码/条形码置于框内即自动扫描";
-            canvas.drawText(text, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+            String text = hint;
+            canvas.drawText(hint, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
         } else {
-            paint.setColor(Color.WHITE);
+            paint.setColor(errorHintColor);
             paint.setTextSize(36);
-            String text = "请允许访问摄像头后重试";
-            canvas.drawText(text, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+            String text = errorHint;
+            canvas.drawText(errorHint, frame.centerX() - text.length() * 36 / 2, frame.bottom + 35 + 20, paint);
+        }
+    }
+
+    // 绘制扫描线
+    // 如果允许绘制 `possible points`则显示居中的红线
+    private void drawScanner(Canvas canvas, Rect frame) {
+        if (showPossiblePoint) {
+            // Draw a red "laser scanner" line through the middle to show decoding is active
+            paint.setColor(laserColor);
+            paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
+            scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
+            int middle = frame.height() / 2 + frame.top;
+            canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);
+        } else {
+            paint.setColor(Color.parseColor("#03A9F4"));
+            scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
+            canvas.translate(0, translateY);
+            canvas.drawRect(frame.left + 10, frame.top, frame.right - 10, frame.top + 10, paint);
+
+            translateY += 5f;
+            if (translateY >= 670) {
+                translateY = 5f;
+            }
+        }
+    }
+
+    // Draw a yellow "possible points"
+    private void drawPossiblePoint(Canvas canvas, Rect frame) {
+        Collection<ResultPoint> currentPossible = possibleResultPoints;
+        Collection<ResultPoint> currentLast = lastPossibleResultPoints;
+        if (currentPossible.isEmpty()) {
+            lastPossibleResultPoints = null;
+        } else {
+            possibleResultPoints = new HashSet<ResultPoint>(5);
+            lastPossibleResultPoints = currentPossible;
+            paint.setAlpha(OPAQUE);
+            paint.setColor(resultPointColor);
+            for (ResultPoint point : currentPossible) {
+                canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 6.0f, paint);
+            }
+        }
+        if (currentLast != null) {
+            paint.setAlpha(OPAQUE / 2);
+            paint.setColor(resultPointColor);
+            for (ResultPoint point : currentLast) {
+                canvas.drawCircle(frame.left + point.getX(), frame.top + point.getY(), 3.0f, paint);
+            }
         }
     }
 }

@@ -6,13 +6,15 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    buildToolsVersion "24.0.3"
+
+    resourcePrefix "qr"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 11
         targetSdkVersion 24
-        versionCode 3
-        versionName "0.2.1"
+        versionCode 6
+        versionName "0.3.3"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
