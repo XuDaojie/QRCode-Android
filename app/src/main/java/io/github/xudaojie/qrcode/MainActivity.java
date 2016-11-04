@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         try {
-//            Bitmap bitmap = EncodingHandler.createQRCode("账号 xudaojieg@gmail.com", 500);
-            Bitmap bitmap = EncodingHandler.encodeAsBitmap();
+            Bitmap bitmap = EncodingHandler.createQRCode("账号 xudaojieg@gmail.com", 500);
+//            Bitmap bitmap = EncodingHandler.encodeAsBitmap();
             codeIv.setImageBitmap(bitmap);
         } catch (WriterException e) {
             e.printStackTrace();
