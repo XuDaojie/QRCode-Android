@@ -21,7 +21,7 @@
         xdj:qr_hint="将二维码/条形码置于框内即自动扫描"
         xdj:qr_textErrorHintColor="@android:color/white"
         xdj:qr_textHintColor="@android:color/darker_gray"
-        xdj:qr_showPossiblePoint="true"
+        xdj:qr_showPossiblePoint="false"
         xdj:qr_offsetX="0"
         xdj:qr_offsetY="-120"/>
 

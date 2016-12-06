@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -27,6 +28,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.URLUtil;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -145,12 +147,19 @@ public class CaptureActivity extends Activity implements Callback {
                 && data != null
                 && requestCode == ActionUtils.PHOTO_REQUEST_GALLERY) {
             Uri inputUri = data.getData();
+            String path = null;
 
-            String[] proj = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(inputUri, proj, null, null, null);
-            if (cursor.moveToFirst()) {
-                String path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
-                // FIXME: 16/9/17 Photo图片为空
+            if (URLUtil.isFileUrl(inputUri.toString())) {
+                // 小米手机直接返回的文件路径
+                path = inputUri.getPath();
+            } else {
+                String[] proj = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(inputUri, proj, null, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+                }
+            }
+            if (!TextUtils.isEmpty(path)) {
                 Result result = QrUtils.decodeImage(path);
                 if (result != null) {
                     if (BuildConfig.DEBUG) Log.d(TAG, result.getText());
@@ -162,6 +171,9 @@ public class CaptureActivity extends Activity implements Callback {
                             .setPositiveButton("确定", null)
                             .show();
                 }
+            } else {
+                if (BuildConfig.DEBUG) Log.e(TAG, "image path not found");
+                Toast.makeText(mActivity, "图片路径未找到", Toast.LENGTH_SHORT).show();
             }
         }
     }

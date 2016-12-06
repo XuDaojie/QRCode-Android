@@ -195,7 +195,8 @@ public class QrUtils {
 
     public static Result decodeImage(final String path) {
         Bitmap bitmap = QrUtils.decodeSampledBitmapFromFile(path, 256, 256);
-
+        // Google Photo 相册中选取云照片是会出现 Bitmap == null
+        if (bitmap == null) return null;
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         int[] pixels = new int[width * height];

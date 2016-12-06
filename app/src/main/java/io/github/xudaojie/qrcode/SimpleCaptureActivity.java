@@ -30,8 +30,6 @@ public class SimpleCaptureActivity extends CaptureActivity {
             Toast.makeText(mActivity, io.github.xudaojie.qrcodelib.R.string.scan_failed, Toast.LENGTH_SHORT).show();
             restartPreview();
         } else {
-            // TODO: 16/9/17 ...
-
             if (mDialog == null) {
                 mDialog = new AlertDialog.Builder(mActivity)
                         .setMessage(resultString)
