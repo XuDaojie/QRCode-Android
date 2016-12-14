@@ -78,7 +78,7 @@ repositories {
 
 ### Add dependency
 ``` gradle
-compile 'com.github.XuDaojie:QRCode-Android:v0.4.1'
+compile 'com.github.XuDaojie:QRCode-Android:v0.4.2'
 ```
 
 ## 吃水不忘挖井人
