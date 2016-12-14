@@ -101,6 +101,7 @@ public class CaptureActivity extends Activity implements Callback {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "xxxxxxxxxxxxxxxxxxxonResume");
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         if (hasSurface) {
@@ -124,6 +125,7 @@ public class CaptureActivity extends Activity implements Callback {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG, "xxxxxxxxxxxxxxxxxxxonPause");
         if (handler != null) {
             handler.quitSynchronously();
             handler = null;
@@ -348,7 +350,6 @@ public class CaptureActivity extends Activity implements Callback {
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         hasSurface = false;
-
     }
 
     public ViewfinderView getViewfinderView() {
@@ -364,9 +365,12 @@ public class CaptureActivity extends Activity implements Callback {
     }
 
     protected void restartPreview() {
-        Message restartMessage = Message.obtain();
-        restartMessage.what = R.id.restart_preview;
-        handler.handleMessage(restartMessage);
+        // 当界面跳转时 handler 可能为null
+        if (handler != null) {
+            Message restartMessage = Message.obtain();
+            restartMessage.what = R.id.restart_preview;
+            handler.handleMessage(restartMessage);
+        }
     }
 
     private void initBeepSound() {
